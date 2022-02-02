@@ -1,45 +1,45 @@
 # FoxEnv
-A Visual Foxpro library that reads `key-value` pairs from a `.env` file and loads them as environment variables.
+Es una librería de Visual Foxpro capaz de leer pares `clave-valor` desde un fichero `.env` y cargarlas en memoria como variables de entorno.
 
 
-`.env` files it's basically a variable text file in which we set a variable with a value *(also known as key-value pair)*, the purpose of this file is to keep your development data *(database access, API keys, etc)* as secret and secure.
+Los ficheros `.env` son básicamente ficheros de variables en el que establecemos una variable con un valor *(también conocido como par clave-valor)*, el propósito de este archivo es mantener sus datos de desarrollo *(acceso a la base de datos, claves API, etc.)* de forma secreta y segura.
 
-`FoxEnv` loads these variables in memory and you can reference it through `_screen.env` object.
+`FoxEnv` carga estas variables en memoria y las puedes acceder a través del objeto `_screen.env`.
 
-## Usage
+## Ejemplo de uso
 ```xBase
    DO FoxEnv WITH "c:\my\file\.env"
    ? _screen.env.my_variable
 ```
 
-## Variable naming convention
+## Convención de nombre para las Variables
 
-A variable name consist of solely letters, digits and the underscore `_` and cannot start with digit. eg: `^[a-zA-Z_]+[a-zA-Z0-9_]*$`
+Un nombre de variable consta únicamente de letras, dígitos y el guión bajo `_` y no puede comenzar con un dígito. eg: `^[a-zA-Z_]+[a-zA-Z0-9_]*$`
 
-## Example variable names
+## Ejemplos de nombres válidos e inválidos
 
 ```.env
-MYSQL_HOST # valid
-api_key # valid
-user-name # invalid
-1password # invalid
+MYSQL_HOST # válido
+api_key # válido
+user-name # inválido
+1password # inválido
 ```
 
-## Values
-All values can be delimited by double quotes or single quotes. Double quote can be used in case you need to interpolate your content with a previous variable value.
+## Valores
+Todos los valores se pueden delimitar con comillas dobles o simples *(o sin delimitar)* Se pueden usar comillas dobles en caso de que necesite interpolar su contenido con un valor de una variable previamente declarada. Las comillas simples no causan interpolación por lo tanto su contenido será tratado de forma literal.
 
-## Examples
+## Ejemplos
 
 ```.env
-MYSQL_HOST = localhost #without quotation (ok)
-USER_NAME = 'root' #with single quote (no interpolation occurs)
-URL = "${USER_NAME}@${MYSQL_HOST}" #double quote indicates the string can be interpolated.
+MYSQL_HOST = localhost # Sin delimitar con comillas (válido)
+USER_NAME = 'root' # con comillas simples (no ocurre la interpolación)
+URL = "${USER_NAME}@${MYSQL_HOST}" # comillas dobles, indican que puede ocurrir una interpolación.
 PASSWORD = 12345
-EMAIL = ${USER_NAME}@example.org #you can also interpolate without double quotes
+EMAIL = ${USER_NAME}@example.org # también se puede interpolar sin delimitar con comillas.
 ```
 
-## Multi-line values
-In order to use multi-line values you must use the `triple-quote heredoc syntax`
+## Valores multi-linea
+Para indicar un valor multi linea tienes que encerrarlo con comillas triples.
 ```.env
 PRIVATE_KEY = """
 ---- BEGIN SSH2 PUBLIC KEY ----
@@ -53,20 +53,20 @@ LGUrH1y5X/rpNZNlWW2+jGIxqZtgWg7lTy3mXy5x836Sj/6L
 """
 ```
 
-## Special interpolation
-Besides referencing variables, you can bind primitive types like `boolean`, `number` and `null` again wrapping it with double quotes
+## Special parsing
+Además de referenciar variables, también puedes parsear tipos primitivos como  `boolean`, `number` y `null` encerrando con comillas dobles.
 
 ```.env
-IS_DEBUG_MODE = "TRUE" # when parsed will be casted as boolean (.t.)
-NOT_TRUE = 'false' # this cannot be casted so it will keep their literal form due single quote.
-FALSE = "false" # this will be casted as .F.
-NONE = "NULL" # this will be casted as .NULL.
-SALARY = 1234.56 # this is a string (dont get confused)
-TOTAL_AMOUNT = "3845.348" # this will be casted into Number data type.
+IS_DEBUG_MODE = "TRUE" # será convertido a .T. (boolean)
+NOT_TRUE = 'false' # no se convierte porque está encerrado con comillas simples.
+FALSE = "false" # será convertido a .F.
+NONE = "NULL" # será convertido a .NULL.
+SALARY = 1234.56 # esto es un string, no se convierte a number.
+TOTAL_AMOUNT = "3845.348" # este si que será convertido a number.
 ```
 
-## Non-interpolated
-If you want to keep the `${}` in your value the wrap your content with single quotes.
+## Sin interpolar
+Si quieres conservar los caracteres usados en la interpolación `${}` solo tienes que encerrar tu contenido en comillas simples.
 
 ```.env
 PASSWORD = '!@34${sdr}'
@@ -75,11 +75,9 @@ CUSTOM_MESSAGE = '''
 '''
 ```
 
-## Comments
-Use the hash-tag `#` symbol to denotes a comment. All comments end with the `line-feed` character.
+## Comentarios
+Para escribir comentarios debes usar la almohadilla `#`. Todos los comentarios finalizan con el salto de línea.
 ```.env
-# comment at the very begining of the line
-SECRET_HASH = "this-is-the-secret-hash-#-and-this-is-not-a-comment" # this last one it is.
+# comentario al inicio de la línea
+SECRET_HASH = "secreto#esto no es comentario" # este si es comentario
 ```
-
-
