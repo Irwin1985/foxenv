@@ -443,11 +443,11 @@ define class envParser as Custom
 					* we try to parse boolean
 					do case
 					case lower(lvNewVal) == "true"
-						lvNewVal = .T.
+						lvValue = .T.
 					case lower(lvNewVal) == "false"
-						lvNewVal = .F.
+						lvValue = .F.
 					case lower(lvNewVal) == "null"
-						lvNewVal = .NULL.
+						lvValue = .NULL.
 					case this.isNumber(lvNewVal)
 						lvValue = val(lvNewVal)
 					otherwise
