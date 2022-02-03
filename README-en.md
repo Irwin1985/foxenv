@@ -81,3 +81,5 @@ Use the hash-tag `#` symbol to denotes a comment. All comments end with the `lin
 # comment at the very begining of the line
 SECRET_HASH = "this-is-the-secret-hash-#-and-this-is-not-a-comment" # this last one it is.
 ```
+
+[Support me on Patreon](https://www.patreon.com/IrwinRodriguez)

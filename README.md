@@ -81,3 +81,5 @@ Para escribir comentarios debes usar la almohadilla `#`. Todos los comentarios f
 # comentario al inicio de la línea
 SECRET_HASH = "secreto#esto no es comentario" # este si es comentario
 ```
+
+[Apóyame en Patreon](https://www.patreon.com/IrwinRodriguez)
