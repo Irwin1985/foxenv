@@ -1,3 +1,4 @@
+![](vfpxmember_large.gif)
 # FoxEnv
 Es una librería de Visual Foxpro capaz de leer pares `clave-valor` desde un fichero `.env` y cargarlas en memoria como variables de entorno.
 
