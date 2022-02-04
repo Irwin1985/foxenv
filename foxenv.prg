@@ -7,7 +7,7 @@ lparameters tcFileName
 
 #define CR chr(13)
 #define LF chr(10)
-#define TAB chr(9)
+#define tab chr(9)
 #define FORM_FEED chr(12)
 #define BACKSPACE chr(8)
 #define NIL  chr(255)
@@ -16,9 +16,9 @@ lparameters tcFileName
 #define FIN		     1
 #define NEWLINE 	 2
 #define IDENT 		 3
-#define NUMBER 		 4
+#define number 		 4
 #define INTERP_STR 	 5
-#define STRING 		 6
+#define string 		 6
 #define ASSIGN 		 7
 #define DOLLAR 		 8
 #define LBRACE 		 9
@@ -52,23 +52,23 @@ define class envLexer as custom
 	dimension aState[4]
 	nCurState = 0
 	hidden oRegEx
-		
+
 	function init(tcFileName)
 		this.cInput = strconv(filetostr(tcFileName), 11)
 		this.cFileName = tcFileName
 		this.nCurPos = 0
 		this.nPeekPos = 1
 		this.nLine = 1
-		
+
 		this.oRegEx = createobject("VBScript.RegExp")
 		this.oRegEx.IgnoreCase = .t.
 		this.oRegEx.global = .t.
-		
-		this.aState[1] = .T.
-		this.aState[2] = .F.
-		this.aState[3] = .F.
-		this.aState[4] = .F.
-		
+
+		this.aState[1] = .t.
+		this.aState[2] = .f.
+		this.aState[3] = .f.
+		this.aState[4] = .f.
+
 		this.advance()
 	endfunc
 
@@ -146,7 +146,7 @@ define class envLexer as custom
 			if this.isString(this.ch)
 				local lnKind
 				this.nBeginColIdentifier = this.nCol
-				lnKind = iif(this.ch == '"', INTERP_STR, STRING)
+				lnKind = iif(this.ch == '"', INTERP_STR, string)
 				return this.newToken(lnKind, this.readString(), this.nBeginColIdentifier)
 			endif
 			if this.ch == LF
@@ -200,7 +200,7 @@ define class envLexer as custom
 	hidden function readString
 		local lcLex, lcPeek, lcStrDelim, lMulStr, lReadToEnd
 		store '' to lcLex, lcPeek
-		
+
 		if inlist(this.ch, "'", '"')
 			if this.peek() == this.ch && treat it like multiple quote
 				lcStrDelim = replicate(this.ch, 3)
@@ -220,9 +220,9 @@ define class envLexer as custom
 			endif
 		else
 			lcStrDelim = chr(13)
-			lReadToEnd = .T.
+			lReadToEnd = .t.
 		endif
-		
+
 		do while !this.isAtEnd()
 			if this.ch = '\'
 				lcPeek = this.peek()
@@ -235,7 +235,7 @@ define class envLexer as custom
 					lcLex = lcLex + CR
 				case lcPeek = 't'
 					this.advance()
-					lcLex = lcLex + TAB
+					lcLex = lcLex + tab
 				case lcPeek = 'f'
 					this.advance()
 					lcLex = lcLex + FORM_FEED
@@ -334,13 +334,13 @@ define class envLexer as custom
 	endfunc
 
 	hidden function isSpace(tch)
-		return tch == space(1) or tch == CR or tch == TAB
+		return tch == space(1) or tch == CR or tch == tab
 	endfunc
 
 	hidden function isLetter(tch)
 		return ('a' <= tch and tch <= 'z') or ('A' <= tch and tch <= 'Z') or tch == '_'
 	endfunc
-	
+
 	function str(toToken)
 		local lcTokenStr
 		lcTokenStr = ''
@@ -376,7 +376,7 @@ define class envLexer as custom
 		this.oRegEx.pattern = tcPattern
 		return this.oRegEx.test(tcTest)
 	endfunc
-	
+
 	hidden function reportError(tcErrMsg)
 		tcErrMsg = this.cFileName + ':' + alltrim(str(this.nLine)) + ':' + alltrim(str(this.nBeginColIdentifier)) + ": error " + tcErrMsg
 		wait tcErrMsg window nowait
@@ -386,7 +386,7 @@ enddefine
 * ======================================================================== *
 * envParser.prg
 * ======================================================================== *
-define class envParser as Custom
+define class envParser as custom
 	#if .f.
 		local this as envParser of env_parser.prg
 	#endif
@@ -394,34 +394,34 @@ define class envParser as Custom
 	hidden oLexer
 	hidden oCurToken
 	hidden oPeekToken
-	
+
 	function init(toLexer)
 		this.oLexer = toLexer
 		this.nextToken()
 		this.nextToken()
 	endfunc
-	
+
 	hidden function nextToken
 		this.oCurToken = this.oPeekToken
-		this.oPeekToken = this.oLexer.NextToken()
+		this.oPeekToken = this.oLexer.nextToken()
 	endfunc
-	
+
 	* variable ::= IDENTIFIER '=' STRING | NUMBER
 	function parse
 		local loEnv, lcVarName, lvValue, lcMacro
 		loEnv = createobject("Empty")
 		lcMacro = ''
 		do while this.oCurToken.Kind != FIN
-			lcVarName = this.oCurToken.lexeme
+			lcVarName = this.oCurToken.Lexeme
 			lvValue = ''
 			this.nextToken()
-			
+
 			* create the property in env objetct
 			this.match(ASSIGN, "expected symbol '='")
 			if type('loEnv.' + lcVarName) = 'U'
 				addproperty(loEnv, lcVarName, .f.)
 			endif
-		
+
 			* check for string interpolation
 			if this.oCurToken.Kind == INTERP_STR
 				local i, j, lcName, lvNewVal
@@ -443,19 +443,19 @@ define class envParser as Custom
 					* we try to parse boolean
 					do case
 					case lower(lvNewVal) == "true"
-						lvValue = .T.
+						lvValue = .t.
 					case lower(lvNewVal) == "false"
-						lvValue = .F.
+						lvValue = .f.
 					case lower(lvNewVal) == "null"
-						lvValue = .NULL.
+						lvValue = .null.
 					case this.isNumber(lvNewVal)
 						lvValue = val(lvNewVal)
 					otherwise
 						lvValue = lvNewVal
-					endcase					
+					endcase
 				endif
 			else
-				lvValue = this.oCurToken.lexeme
+				lvValue = this.oCurToken.Lexeme
 			endif
 			lcMacro = "loEnv." + lcVarName + "=lvValue"
 			&lcMacro
@@ -469,7 +469,7 @@ define class envParser as Custom
 		endif
 		addproperty(_screen,'env', loEnv)
 	endfunc
-	
+
 	hidden function match(tnKind, tcErrorMsg)
 		if this.oCurToken.Kind == tnKind
 			this.nextToken()
@@ -477,18 +477,23 @@ define class envParser as Custom
 			this.reportError(tcErrorMsg)
 		endif
 	endfunc
-	
+
 	hidden function reportError(tcErrMsg)
-		tcErrMsg = this.oLexer.cFileName + ':' + alltrim(str(this.oCurToken.Line)) + ':' + alltrim(str(this.oCurToken.Col)) + ": error " + tcErrMsg
+		tcErrMsg = this.oLexer.cFileName + ':' + alltrim(str(this.oCurToken.line)) + ':' + alltrim(str(this.oCurToken.col)) + ": error " + tcErrMsg
 		wait tcErrMsg window nowait
 	endfunc
-	
+
 	hidden function isNumber(tcValue)
-		local i
+		if occurs('.', tcValue) > 1
+			return .f.
+		endif
+		local i, c
 		for i = 1 to len(tcValue)
-			if !isdigit(substr(tcValue, i, 1))
-				return .f.
+			c = substr(tcValue, i, 1)
+			if isdigit(c) or c == '.'
+				loop
 			endif
+			return .f.
 		endfor
 		return .t.
 	endfunc
