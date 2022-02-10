@@ -2,6 +2,10 @@
 # FoxEnv
 Es una librería de Visual Foxpro capaz de leer pares `clave-valor` desde un fichero `.env` y cargarlas en memoria como variables de entorno.
 
+Si te gusta mi trabajo puedes apoyarme con un donativo:   
+- [![DONATE!](http://www.pngall.com/wp-content/uploads/2016/05/PayPal-Donate-Button-PNG-File-180x100.png)](https://www.paypal.com/donate/?hosted_button_id=LXQYXFP77AD2G) 
+
+    Gracias por tu apoyo!
 
 Los ficheros `.env` son básicamente ficheros de variables en el que establecemos una variable con un valor *(también conocido como par clave-valor)*, el propósito de este archivo es mantener sus datos de desarrollo *(acceso a la base de datos, claves API, etc.)* de forma secreta y segura.
 
